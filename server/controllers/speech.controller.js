@@ -58,7 +58,7 @@ speechCtrl.update = async (req, res) => {
 
 speechCtrl.delete = (req, res) => {
     const { id } = req.params;
-    Speech.findByIdAndDelete(id).then((speech) => {
+    Speech.findByIdAndUpdate(id, { $set: { active: false } }).then((speech) => {
         if (speech) {
             res.status(200).send({ mesage: 'Speech succesfuly deleted!' });
         } else {
