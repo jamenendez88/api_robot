@@ -1,8 +1,9 @@
-const actionCtrl = {};
+const emotionCtrl = {};
 const Emotion = require('../models/emotion');
+const EmotionLog = require('../models/emotionlog');
 var in_array = require('in_array');
 
-actionCtrl.getAll = (req, res) => {
+emotionCtrl.getAll = (req, res) => {
     var params = {};
     for (key in req.query) {
         // check if the params are corrects for find
@@ -10,18 +11,18 @@ actionCtrl.getAll = (req, res) => {
             req.query[key] !== "" ? params[key] = new RegExp(req.query[key], "i") : null;
         }
     }
-    Emotion.find({ $or: [params] }).select('-__v').then((actions) => {
-        if (actions.length > 0) {
-            res.status(200).jsonp(actions);
+    Emotion.find({ $or: [params] }).select('-__v').then((emotions) => {
+        if (emotions.length > 0) {
+            res.status(200).jsonp(emotions);
         } else {
-            res.status(404).jsonp("Not found anyone");
+            res.status(404).jsonp("Not found anything");
         }
     }).catch((error) => {
         res.status(500).jsonp(error.message);
     });
 }
 
-actionCtrl.getOne = (req, res) => {
+emotionCtrl.getOne = (req, res) => {
     const { id } = req.params;
     Emotion.findById(id).select('-__v').then((emotion) => {
         if (emotion) {
@@ -34,18 +35,18 @@ actionCtrl.getOne = (req, res) => {
     });
 }
 
-actionCtrl.create = (req, res) => {
+emotionCtrl.create = (req, res) => {
     const emotion = new Emotion(req.body);
-    emotion.save().then((emotion) => {
+    emotion.save().then(() => {
         res.status(200).send({ message: 'Emotion successfuly saved!' });
     }).catch((error) => {
         res.status(500).jsonp(error.message);
     });
 }
 
-actionCtrl.update = async (req, res) => {
+emotionCtrl.update = (req, res) => {
     const { id } = req.params;
-    await Emotion.findByIdAndUpdate(id, { $set: req.body }, { new: true }).then((emotion) => {
+    Emotion.findByIdAndUpdate(id, { $set: req.body }, { new: true }).then((emotion) => {
         if (emotion) {
             res.status(200).send({ message: 'Emotion successfuly updated!' });
         } else {
@@ -56,9 +57,9 @@ actionCtrl.update = async (req, res) => {
     });
 }
 
-actionCtrl.delete = (req, res) => {
+emotionCtrl.delete = (req, res) => {
     const { id } = req.params;
-    Emotion.findByIdAndDelete(id).then((emotion) => {
+    Emotion.findByIdAndUpdate(id, { $set: { active: false } }).then((emotion) => {
         if (emotion) {
             res.status(200).send({ message: 'Emotion successfuly deleted!' });
         } else {
@@ -68,4 +69,28 @@ actionCtrl.delete = (req, res) => {
         res.status(500).jsonp(error.message);
     });
 }
-module.exports = actionCtrl;
+
+emotionCtrl.perform = (req, res) => {
+    const { id } = req.params;
+    Emotion.findById(id).then((emotion) => {
+        if (emotion) {
+            //The robot performs an emotion (an array of atomic emotions)
+            var begin = new Date();
+            var end = new Date();
+            end.setSeconds(end.getSeconds() + 10);
+            var log = new EmotionLog({
+                begin: begin,
+                emotion: emotion,
+                end: end
+            });
+            log.save().then(() => {
+                res.status(200).send({ message: 'Emotion successfuly made!' });
+            });
+        } else {
+            res.status(404).jsonp("Not found");
+        }
+    }).catch((error) => {
+        res.status(500).jsonp(error.message);
+    });
+}
+module.exports = emotionCtrl;

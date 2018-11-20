@@ -6,6 +6,7 @@ const IdChecker = require('../commons/utils');
 router.get('/', emotionCtrl.getAll);
 router.get('/:id', IdChecker.check, emotionCtrl.getOne);
 router.post('/', emotionCtrl.create);
+router.post('/:id', IdChecker.check, emotionCtrl.perform);
 router.put('/:id', IdChecker.check, emotionCtrl.update);
 router.delete('/:id', IdChecker.check, emotionCtrl.delete);
 module.exports = router;

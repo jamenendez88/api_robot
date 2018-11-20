@@ -12,13 +12,13 @@ app.use(express.json());
 
 //Routes
 //Robot actions
-app.use('/api/actions',require('./routes/action.routes'));
-app.use('/api/emotions',require('./routes/emotion.routes'));
+app.use('/api/actions/types',require('./routes/action.routes'));
+app.use('/api/emotions/types',require('./routes/emotion.routes'));
 //Robot action logs
-app.use('/api/dialogs',require('./routes/dialogs.routes'));
-app.use('/api/listenings',require('./routes/listenings.routes'));
-app.use('/api/actions/types',require('./routes/listenings.routes'));
-app.use('/api/emotions/types',require('./routes/listenings.routes'));
+app.use('/api/dialogs',require('./routes/speech.routes'));
+app.use('/api/listenings',require('./routes/listening.routes'));
+app.use('/api/actions',require('./routes/actionlog.routes'));
+app.use('/api/emotions',require('./routes/emotionlog.routes'));
 
 //Starting the server
 app.listen(app.get('port'), () => {
