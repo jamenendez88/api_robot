@@ -36,6 +36,7 @@ speechCtrl.getOne = (req, res) => {
 
 speechCtrl.create = (req, res) => {
     const speech = new Speech(req.body);
+    //The robot say something
     speech.save().then((speeches) => {
         res.status(200).send({ mesage: 'Speech succesfuly saved!' });
     }).catch((error) => {

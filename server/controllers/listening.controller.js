@@ -36,7 +36,7 @@ listeningCtrl.getOne = (req, res) => {
 
 listeningCtrl.create = (req, res) => {
     const listening = new Listening(req.body);
-    //the robot make a sound
+    //the robot listen a sound and then make something
     listening.save().then(() => {
         res.status(200).send({ mesage: 'Listening succesfuly saved!' });
     }).catch((error) => {
